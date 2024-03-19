@@ -23,14 +23,14 @@ async function loadPokemons(url) {
             try {
                 let res = await fetch(json.results[i].url),
                 pokemon = await res.json();
-                //console.log(res, pokemon);
+                console.log(res, pokemon);
 
                 if(!res.ok) throw { status: res.status, statusText: res.statusText }
 
                 $template += `
                     <figure class="pokemon-card">
                         <img class="pokemon-img" src="${pokemon.sprites.front_default}" alt="${pokemon.name}">
-                        <figcaption>${pokemon.name}</figcaption>
+                        <figcaption>${pokemon.name} -- type: ${pokemon.types[0].type.name}</figcaption>
                     </figure>
                 `;
             } catch (err) {
@@ -62,5 +62,9 @@ d.addEventListener("click", e => {
     if(e.target.matches(".links a")){
         e.preventDefault();
         loadPokemons(e.target.getAttribute("href"));
+    }
+
+    if (e.target.matches(".pokemon-card, .pokemon-card *")) {
+        alert("HOla");
     }
 });

@@ -30,7 +30,7 @@ async function loadPokemons(url) {
                 $template += `
                     <figure class="pokemon-card" data-pokemon="${json.results[i].url}">
                         <img class="pokemon-img" src="${pokemon.sprites.front_default}" alt="${pokemon.name}">
-                        <figcaption>${pokemon.name} -- type: ${pokemon.types[0].type.name}</figcaption>
+                        <figcaption>${pokemon.name} 🏴‍☠️ type: ${pokemon.types[0].type.name}</figcaption>
                     </figure>
                 `;
             } catch (err) {
@@ -77,7 +77,7 @@ d.addEventListener("click", async e => {
             } else {
                 let pokemon = await res.json(),
                     $modal = d.getElementById("modal"),
-                    abilities = pokemon.abilities.map(ability => `<li>${ability.ability.name}</li>`).join(''),
+                    abilities = pokemon.abilities.map(ability => `<li>⚔️ ${ability.ability.name}</li>`).join(''),
                     $template = `
                         <div class="modal-content">
                             <h2>${pokemon.name}</h2>

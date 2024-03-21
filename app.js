@@ -56,6 +56,35 @@ async function loadPokemons(url) {
     }
 }
 
+
+async function searchPokemons(url) {
+    try {
+        $main.innerHTML = `<img class="loader" src="assets/three-dots.svg" alt="Cargando...">`;
+        let res = await fetch(url),
+        $template = "",
+        pokemon = await res.json();
+        console.log(pokemon);
+
+        if(!res.ok) throw { status: res.status, statusText: res.statusText }
+
+        $template += `
+            <figure class="pokemon-card" data-pokemon="${url}">
+                <img class="pokemon-img" src="${pokemon.sprites.front_default}" alt="${pokemon.name}">
+                <figcaption>${pokemon.name} 🏴‍☠️ type: ${pokemon.types[0].type.name}</figcaption>
+            </figure>
+        `;
+        $main.innerHTML = $template;
+        $links.innerHTML = `<a href="${urlAPI}">⚒️</a>`;
+
+    } catch (err) {
+        console.log(err);
+        let message = err.statusText || "Pokemon no encontrado en la base de datos!";
+        $main.innerHTML = `<p class="error">Error ${err.status}: ${message}</p>`;
+        $links.innerHTML = `<a href="${urlAPI}">⚒️</a>`;
+    }
+}
+
+
 d.addEventListener("DOMContentLoaded", e => loadPokemons(urlAPI));
 
 
@@ -98,7 +127,7 @@ d.addEventListener("click", async e => {
     }
 });
 
-// Cierra el modal cuando haces clic fuera
+
 window.onclick = function(event) {
     let $modal = d.querySelector("#modal");
     if (event.target == $modal) {
@@ -106,3 +135,11 @@ window.onclick = function(event) {
     }
 }
 
+d.addEventListener("keypress", async e =>{
+    if (e.target.matches("#search")) {
+        if (e.key === "Enter") {
+            let query = e.target.value.toLowerCase();
+            searchPokemons(`${urlAPI}${query}`);
+        }
+    }
+});

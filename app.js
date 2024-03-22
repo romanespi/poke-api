@@ -4,6 +4,7 @@ const d = document,
 
 let urlAPI = "https://pokeapi.co/api/v2/pokemon/";
 
+// *********************************************** Función para cargar Pokémons ***********************************
 async function loadPokemons(url) {
     try {
         $main.innerHTML = `<img class="loader" src="assets/three-dots.svg" alt="Cargando...">`;
@@ -18,6 +19,7 @@ async function loadPokemons(url) {
 
         if(!res.ok) throw { status: res.status, statusText: res.statusText }
 
+//----------------------------------------------- Recorrer arreglo por cada Pokémon ----------------------------
         for (let i = 0; i < json.results.length; i++) {
             //console.log(json.results[i]);
             try {
@@ -33,6 +35,7 @@ async function loadPokemons(url) {
                         <figcaption>${pokemon.name} 🏴‍☠️ type: ${pokemon.types[0].type.name}</figcaption>
                     </figure>
                 `;
+//---------------------------------------------------- Capturar error por cada Pokémon -----------------------------
             } catch (err) {
                 console.log(err);
                 let message = err.statusText || "Ocurrio un error";
@@ -42,13 +45,14 @@ async function loadPokemons(url) {
                     </figure>
                 `;
             }
-
+//--------------------------------------------------- Pintamos en el HTML -----------------------
             $main.innerHTML = $template;
             $prevLink = json.previous ? `<a href="${json.previous}">◀️</a>` : "";
             $nextLink = json.next ? `<a href="${json.next}">▶️</a>` : "";
             $links.innerHTML = $prevLink + " " + $nextLink;
         }
-
+        
+//--------------------------------------------------- Captura error en el arreglo de Pokémons ------------------------
     } catch (err) {
         console.log(err);
         let message = err.statusText || "Ocurrio un error";
@@ -56,7 +60,7 @@ async function loadPokemons(url) {
     }
 }
 
-
+//******************************************************** Función para buscar Pokémon ************************************/
 async function searchPokemons(url) {
     try {
         $main.innerHTML = `<img class="loader" src="assets/three-dots.svg" alt="Cargando...">`;
@@ -76,6 +80,7 @@ async function searchPokemons(url) {
         $main.innerHTML = $template;
         $links.innerHTML = `<a href="${urlAPI}">⚒️</a>`;
 
+//--------------------------------- Captura de error en busqueda ---------------------------------/
     } catch (err) {
         console.log(err);
         let message = err.statusText || "Pokemon no encontrado en la base de datos!";
@@ -84,26 +89,28 @@ async function searchPokemons(url) {
     }
 }
 
-
+//******************************* Cargar pokémons al iniciar la página ***************************
 d.addEventListener("DOMContentLoaded", e => loadPokemons(urlAPI));
 
-
+//****************************** Evento click para paginación y modal ********************/
 d.addEventListener("click", async e => {
+//------------------------------ Evento para paginación ------------------------
     if(e.target.matches(".links a")){
         e.preventDefault();
         loadPokemons(e.target.getAttribute("href"));
     }
-
+//----------------------------- Evento para modal -------------------------------
     if (e.target.matches(".pokemon-card, .pokemon-card *")) {
         let $card = e.target.closest(".pokemon-card");
         if ($card) {
             //console.log($card.dataset.pokemon);
             let apiURL = $card.dataset.pokemon;
             let res = await fetch(apiURL);
-                
+//----------------------------- Captura de error --------------------------
             if (!res.ok) {
                 throw new Error(`HTTP error! status: ${res.status}`);
             } else {
+//------------------------------ Agregar caracteristas del pokémon al modal ------------
                 let pokemon = await res.json(),
                     $modal = d.getElementById("modal"),
                     abilities = pokemon.abilities.map(ability => `<li>⚔️ ${ability.ability.name}</li>`).join(''),
@@ -127,7 +134,7 @@ d.addEventListener("click", async e => {
     }
 });
 
-
+//******************************** Evento click para cerrar modal ***********************
 window.onclick = function(event) {
     let $modal = d.querySelector("#modal");
     if (event.target == $modal) {
@@ -135,6 +142,7 @@ window.onclick = function(event) {
     }
 }
 
+//********************************* Evento click para buscar Pokémons  ****************/
 d.addEventListener("keypress", async e =>{
     if (e.target.matches("#search")) {
         if (e.key === "Enter") {
